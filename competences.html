@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Compétences Interactives</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo"><img src="logo.png" alt=""></div>
+        <nav>
+            <a href="index.html">Accueil</a>
+            <a href="apropos.html">À propos</a>
+            <a href="competences.html">Compétences</a>
+            <a href="projets.html">Projet</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <input type="search" placeholder="Recherche">
+    </header>
+
+    <div class="container">
+        <h1>Mes Compétences</h1>
+        <div class="skills-container" id="skillsContainer">
+            <!-- Les compétences seront ajoutées ici dynamiquement -->
+        </div>
+    </div>
+
+    <script>
+        class SkillsManager {
+            constructor() {
+                this.skillsContainer = document.getElementById('skillsContainer');
+                this.skills = [
+                    { name: 'HTML', level: 90, description: 'Bonne maîtrise du HTML et des bonnes pratiques de structuration.' },
+                    { name: 'CSS', level: 85, description: 'Création de layouts complexes et design responsive.' },
+                    { name: 'JavaScript', level: 80, description: 'Développement d\'applications web .' },
+                    { name: 'Sites web', level: 75, description: 'Création des sites web sur mesure.' },
+                    { name: 'Applications', level: 70, description: 'Développement des applications mobile basique .' },
+                    { name: 'Web design', level: 65, description: 'Création  de maquettes des applications et sites web, prototypage et wireframes .' }
+                ];
+                this.init();
+            }
+
+            init() {
+                this.renderSkills();
+                this.addEventListeners();
+            }
+
+            renderSkills() {
+                this.skills.forEach(skill => {
+                    const skillElement = this.createSkillElement(skill);
+                    this.skillsContainer.appendChild(skillElement);
+                });
+            }
+
+            createSkillElement(skill) {
+                const skillDiv = document.createElement('div');
+                skillDiv.classList.add('skill');
+                skillDiv.innerHTML = `
+                    <h3>${skill.name}</h3>
+                    <div class="skill-bar">
+                        <div class="skill-progress" style="width: 0%"></div>
+                    </div>
+                    <div class="skill-details">
+                        <p>${skill.description}</p>
+                    </div>
+                `;
+                return skillDiv;
+            }
+
+            addEventListeners() {
+                this.skillsContainer.addEventListener('click', (e) => {
+                    const skillElement = e.target.closest('.skill');
+                    if (skillElement) {
+                        this.toggleSkillDetails(skillElement);
+                    }
+                });
+
+                // Observer pour animer les barres de progression lorsqu'elles sont visibles
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const progressBar = entry.target.querySelector('.skill-progress');
+                            const skill = this.skills.find(s => s.name === entry.target.querySelector('h3').textContent);
+                            progressBar.style.width = `${skill.level}%`;
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                document.querySelectorAll('.skill').forEach(skill => observer.observe(skill));
+            }
+
+            toggleSkillDetails(skillElement) {
+                const details = skillElement.querySelector('.skill-details');
+                if (details.style.display === 'none' || details.style.display === '') {
+                    details.style.display = 'block';
+                    details.style.animation = 'fadeIn 0.5s ease-in-out';
+                } else {
+                    details.style.display = 'none';
+                }
+            }
+        }
+
+        // Initialiser le gestionnaire de compétences
+        new SkillsManager();
+    </script>
+</body>
+</html>
